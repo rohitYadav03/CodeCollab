@@ -1,9 +1,14 @@
+import { Route, Routes } from "react-router-dom"
+import HomePage from "./pages/HomePage.tsx"
+import Roompage from "./components/Roompage.tsx"
+
 function App() {
 
   return (
- <div>
-  <h1 className='bg-red-500'>Hii</h1>
- </div>
+    <Routes>
+    <Route path="/" element={<HomePage />} />
+    <Route path="/room/:id" element={<Roompage /> } />
+    </Routes>
   )
 }
 
