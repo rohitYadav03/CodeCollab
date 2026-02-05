@@ -210,6 +210,25 @@ function copyCode() {
   alert("Code copied!");
 }
 
+function downloadCode() {
+  const code = editorRef.current?.getValue();
+
+  if (!code) {
+    alert("No code to download");
+    return;
+  }
+
+  const blob = new Blob([code], { type: "text/javascript" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "code.js";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
@@ -225,6 +244,13 @@ function copyCode() {
   className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-sm rounded"
 >
   Copy Code
+</button>
+
+<button
+  onClick={downloadCode}
+  className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-sm rounded"
+>
+  Download Code
 </button>
 
 </div>
