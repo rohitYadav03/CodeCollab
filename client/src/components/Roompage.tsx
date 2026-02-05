@@ -28,7 +28,7 @@ const [ users , setUsers] = useState<any[]>([]);
     ydocRef.current = ydoc;
 
     // 2️⃣ Connect to WebSocket server (room = URL id) -> to brodcast and accept the changes from everyone
-  const provider = new WebsocketProvider(
+const provider = new WebsocketProvider(
       "ws://localhost:3000",
       id!,
       ydoc
@@ -71,14 +71,25 @@ awareness.on("change", () => {
   updateUser();
 })
 
+editorInstance.onDidChangeCursorPosition((e) => {
+  
+  // sirf awareness ka ek field update krhta hai setLocalState bura update krtha hai 
+awareness.setLocalStateField("cursor", {
+  line : e.position.lineNumber,
+  column : e.position.column
+})
+  
+})
+
   // 3️⃣ Get shared text
-    const ytext = ydoc.getText("monaco");
+const ytext = ydoc.getText("monaco");
 
     // 4️⃣ Bind Monaco ↔ Yjs => for syncin editor text with yjs document
  const binding = new MonacoBinding(
       ytext,
       editorInstance.getModel()!,
-      new Set([editorInstance])
+      new Set([editorInstance]),
+      awareness // Isse monoco css class add krtha hai 
     );
     bindingRef.current = binding;
 
@@ -86,11 +97,94 @@ console.log("✅ awareness local state set");
 console.log(provider.awareness.getStates());
 
     console.log("✅ collaborative editor ready");
-  }
+  };
+
+
+  useEffect(() => {
+  const style = document.createElement("style");
+  style.id = "remote-cursors";
+
+  style.innerHTML = `
+    .yRemoteSelection {
+      background-color: rgba(255, 0, 0, 0.25);
+    }
+
+    .yRemoteSelectionHead {
+      border-left: 2px solid red;
+      margin-left: -1px;
+    }
+  `;
+
+  document.head.appendChild(style);
+
+  return () => {
+    document.getElementById("remote-cursors")?.remove();
+  };
+}, []);
+
+useEffect(() => {
+  const provider = providerRef.current;
+  if (!provider) return;
+
+  const awareness = provider.awareness;
+  const style = document.createElement("style");
+  style.id = "cursor-label-styles";
+
+  const updateStyles = () => {
+    let css = "";
+
+    awareness.getStates().forEach((state: any, clientId: number) => {
+      if (!state.user) return;
+
+      css += `
+        .yRemoteSelection-${clientId} {
+          background-color: ${state.user.color}40;
+        }
+
+        .yRemoteSelectionHead-${clientId} {
+          border-left: 2px solid ${state.user.color};
+          position: relative;
+        }
+
+        .yRemoteSelectionHead-${clientId}::after {
+          content: "${state.user.name}";
+          position: absolute;
+          top: -18px;
+          left: 0;
+          background-color: ${state.user.color};
+          color: white;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 2px 6px;
+          border-radius: 4px;
+          white-space: nowrap;
+        }
+      `;
+    });
+
+    style.innerHTML = css;
+  };
+
+  updateStyles();
+  awareness.on("change", updateStyles);
+  document.head.appendChild(style);
+
+  return () => {
+    awareness.off("change", updateStyles);
+    document.getElementById("cursor-label-styles")?.remove();
+  };
+}, []);
+
+
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+    const provider = providerRef.current;
+
+    // 🔥 BOX 5: remove cursor + user from awareness
+    provider?.awareness.setLocalState(null);
+    
       bindingRef.current?.destroy();
       providerRef.current?.destroy();
       ydocRef.current?.destroy();
@@ -110,7 +204,7 @@ console.log(provider.awareness.getStates());
       </div>
 
       <Editor
-        height="100%"
+        height="60%"
         defaultLanguage="javascript"
         defaultValue="// Start typing…"
         theme="vs-dark"
