@@ -6,6 +6,7 @@ import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { MonacoBinding } from "y-monaco";
 import { useUser } from "../context/UserContext";
+import ChatPanel from "./ChatPanel";
 
 export default function Roompage() {
   const { id } = useParams();
@@ -184,15 +185,50 @@ useEffect(() => {
 
     // 🔥 BOX 5: remove cursor + user from awareness
     provider?.awareness.setLocalState(null);
-    
+
       bindingRef.current?.destroy();
       providerRef.current?.destroy();
       ydocRef.current?.destroy();
     };
   }, []);
 
+  function copyRoomLink() {
+  const link = `${window.location.origin}/room/${id}`;
+  navigator.clipboard.writeText(link);
+  alert("Room link copied!");
+}
+
+function copyCode() {
+  const code = editorRef.current?.getValue();
+
+  if (!code) {
+    alert("No code to copy");
+    return;
+  }
+
+  navigator.clipboard.writeText(code);
+  alert("Code copied!");
+}
+
+
   return (
     <div style={{ display: "flex", height: "100vh" }}>
+      <div className="flex items-center gap-3 px-4 py-2 border-b border-slate-700 bg-slate-900">
+  <button
+    onClick={copyRoomLink}
+    className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-sm rounded"
+  >
+    Copy Room Link
+  </button>
+  <button
+  onClick={copyCode}
+  className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-sm rounded"
+>
+  Copy Code
+</button>
+
+</div>
+
       {/* 🔥 BOX 4: Online users UI */}
       <div style={{ width: "200px", padding: "10px", background: "#111" }}>
         <h4 style={{ color: "#fff" }}>Online Users</h4>
@@ -210,6 +246,8 @@ useEffect(() => {
         theme="vs-dark"
         onMount={handleEditorMount}
       />
+
+      <ChatPanel roomId={id!}/>
     </div>
   );
 }
