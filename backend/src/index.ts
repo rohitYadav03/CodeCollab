@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import { WebSocketServer } from "ws"
+import "dotenv/config"
 // @ts-ignore
 import yws from 'y-websocket/bin/utils';
 import { createServer } from "node:http"
@@ -19,6 +20,6 @@ wss.on("connection", (ws , req) => {
     yws.setupWSConnection(ws, req); 
 });
 
-httpServer.listen(3000, () => {
-    console.log("listing to port 3000");
+httpServer.listen(process.env.PORT, () => {
+    console.log("listing to ", process.env.PORT);
 })
