@@ -1,7 +1,9 @@
 import express from "express"
 import cors from "cors"
 import { WebSocketServer } from "ws"
-import "dotenv/config"
+import dotenv from "dotenv";
+dotenv.config();
+
 // @ts-ignore
 import yws from 'y-websocket/bin/utils';
 import { createServer } from "node:http"
