@@ -11,17 +11,17 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "devDependencies": {
-    "dotenv": "^17.2.3",
-    "typescript": "^5.9.3"
-  },
   "dependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/ws": "^8.18.1",
+    "dotenv": "^17.2.3",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "ws": "^8.19.0",
     "y-websocket": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/ws": "^8.18.1",
+    "typescript": "^5.9.3"
   }
 }
