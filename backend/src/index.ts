@@ -11,6 +11,10 @@ app.use(cors());
 
 const httpServer = createServer(app);
 
+app.get("/", (req, res) => {
+    res.send("Woking fine !!")
+})
+
 const wss = new WebSocketServer({ server : httpServer});
 
 wss.on("connection", (ws , req) => {
