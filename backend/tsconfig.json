@@ -3,19 +3,13 @@
     "rootDir": "./src",
     "outDir": "./dist",
 
-    "target": "esnext",
+    "target": "es2020",
     "module": "nodenext",
     "moduleResolution": "nodenext",
 
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
-    "strict": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
 
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true
+    "strict": false
   }
 }
