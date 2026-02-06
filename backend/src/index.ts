@@ -6,7 +6,7 @@ dotenv.config();
 
 // @ts-ignore
 import yws from 'y-websocket/bin/utils';
-import { createServer } from "node:http"
+import { createServer } from "http"
 
 const app = express();
 app.use(cors());
